@@ -1,0 +1,195 @@
+﻿------------------------------------ Retention page (PowerBI) -----------------------------------------------
+
+-- Cards:
+
+EVALUATE (ROW ("Number of expenses", DISTINCTCOUNT(Sales[Expenses])))
+
+EVALUATE (ROW ("Smallest expense", MINX(FILTER(sales,[Expenses] <> 0), Sales[Expenses])))
+
+EVALUATE (ROW ("Highest expense", MAX(Sales[Expenses])))
+
+EVALUATE( SELECTCOLUMNS(Products, "Product name", Products[Product Name]))
+
+-- Income and expenses by product name:
+
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        Products[Product Name],
+        "Total income",
+        SUM(Sales[Income]),
+        "Total expenses",
+        SUM(Sales[Expenses])
+		
+    )
+  
+-- Retention percentage by GEO region:  
+  
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        Customers[GEO Region],
+        "Retention percentage",
+        SUM(Sales[Expenses]) / SUM(Sales[Income])
+		
+    )
+    
+-- SAMEPERIODLASTYEAR doesn't work inside SUMMARIZE  
+    
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        'Date'[Date],
+        "Retention percentage",
+        SUM(Sales[Expenses]) / SUM(Sales[Income]),
+        "Retention percentage same period last year",
+        CALCULATE(SUM(Sales[Expenses]), SAMEPERIODLASTYEAR('Date'[Date]))
+    )
+    
+------------------------------------ Price change page (PowerBI) -----------------------------------------------
+
+-- Cards:
+
+EVALUATE (ROW ("Average price", AVERAGE(Sales[AbsPrice])))
+
+EVALUATE (ROW ("Average price", MAX(Sales[AbsPrice])))
+
+EVALUATE (ROW ("Average price", MIN(Sales[AbsPrice])))
+
+EVALUATE (ROW ("Average price", MEDIAN((Sales[AbsPrice]))))
+
+-- Total revenue and average price by years:
+
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        'Date'[Year],
+        "Total revenue",
+        SUM(Sales[Revenue]),
+        "Average price",
+        AVERAGE(Sales[AbsPrice])
+    )
+    
+-- Average price by division name:
+    
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        Products[Division Name],
+        "Average price",
+        AVERAGE(Sales[AbsPrice])
+    )
+    
+-- Average price, minimum price, maximum price and median price by Product Name
+    
+EVALUATE
+    SUMMARIZE (
+        Sales,
+        Products[Product Name],
+        "Average price",
+        AVERAGE(Sales[AbsPrice]),
+        "Highest price",
+        MAX(Sales[AbsPrice]),
+        "Lowest price",
+        MIN(Sales[AbsPrice]),
+        "Median price",
+        MEDIAN(Sales[AbsPrice])
+    )
+    
+------------------------------------ (PowerBI) -----------------------------------------------
+
+-- Cards:
+
+EVALUATE (ROW("Total revenue - YTD", TOTALYTD(Sum(Sales[Revenue]),'Date'[Date])))
+
+EVALUATE (ROW("Total revenue - QTD", TOTALQTD(Sum(Sales[Revenue]),'Date'[Date])))
+
+-- Total revenue by customer name
+
+EVALUATE 
+    SUMMARIZE (
+        Sales,
+        Customers[Customer Name],
+        "Total revenue",
+        SUM(Sales[Revenue])
+    )
+
+-- Total income by quarter - what-if
+
+EVALUATE 
+    SUMMARIZE (
+        Sales,
+        'Date'[Date],
+        "Total income",
+        SUM(Sales[Income]),
+        "Total income what-if multiply by 1.1",
+        SUM(Sales[Income]) * 1.1
+    )
+    
+-- Total revenue - drill down - region -> country -> customer name
+    
+-- Total revenue by all GEO regions
+    
+EVALUATE 
+    SUMMARIZE (
+        Sales,
+        Customers[GEO Region],
+        "Total revenue",
+        SUM(Sales[Revenue])
+    )
+    
+-- Total revenue by GEO region = "Americas"
+
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Sales,
+			Customers[GEO Region] = "Americas"
+		),
+        Customers[Country],
+        "Total revenue",
+        SUM(Sales[Revenue])
+    )
+    
+-- Total revenue by country = "USA" and Year = 2011
+    
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Sales,
+			Customers[Country] = "USA",
+			'Date'[Year] = "2011"
+		),
+        Customers[Customer Name],
+        "Total revenue",
+        SUM(Sales[Revenue])
+    )
+    
+-- Number of orders by GEO region
+
+EVALUATE
+	SUMMARIZE(
+    	Sales,
+        Customers[GEO Region],
+        "Total revenue",
+        DISTINCTCOUNT(Sales[OrderSK])
+    )
+
+-- Number of orders by GEO region in 2011
+
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Sales,
+			'Date'[Year] = "2011"
+		),
+        Customers[GEO Region],
+        "Total revenue",
+        DISTINCTCOUNT(Sales[OrderSK])
+    )
+
+
+
+    
+
+    

@@ -1,0 +1,102 @@
+﻿------------------------------------ Price change page -----------------------------------------------
+
+EVALUATE
+    SUMMARIZE (
+        Fact_OrderLines,
+        'Dim_Date'[Date],
+        "Total revenue",
+        SUM(Fact_OrderLines[Revenue])
+    )
+    
+------------------------------------ Health and life insurance ----------------------------------------
+
+-- Health insurance revenue by region
+
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Products[DivisionName] = "Health Insurance"
+		),
+        Dim_Customers[GEO Region],
+        "Total revenue health insurance",
+        SUM(Fact_OrderLines[Revenue])
+    )
+
+-- Life insurance revenue by region
+
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Products[DivisionName] = "Life Insurance"
+		),
+        Dim_Customers[GEO Region],
+        "Total revenue life insurance",
+        SUM(Fact_OrderLines[Revenue])
+    )
+    
+-- Health insurance revenue by country and by quarter
+    
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Products[DivisionName] = "Health Insurance",
+			Dim_Date[Year] = 2011,
+			Dim_Date[Quarter] = 1
+		),
+        Dim_Customers[Country],
+        "Total revenue health insurance",
+        SUM(Fact_OrderLines[Revenue])
+    )
+    
+-- Life insurance revenue by country and by quarter
+    
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Products[DivisionName] = "Life Insurance",
+			Dim_Date[Year] = 2011,
+			Dim_Date[Quarter] = 1
+		),
+        Dim_Customers[Country],
+        "Total revenue life insurance",
+        SUM(Fact_OrderLines[Revenue])
+    )
+    
+------------------------------------ Revenue by industry type ----------------------------------------
+
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Customers[IndustryType] = "End-User"
+		),
+        Dim_Customers[Country],
+        "Total revenue end-users",
+        SUM(Fact_OrderLines[Revenue])
+    )
+    
+EVALUATE
+	SUMMARIZE(
+    	CALCULATETABLE(
+			Fact_OrderLines,
+			Dim_Customers[IndustryType] = "Distributor"
+		),
+        Dim_Customers[Country],
+        "Total revenue distributors",
+        SUM(Fact_OrderLines[Revenue])
+    )
+
+    
+
+    
+
+    
+
+	
+	
+	
+	
